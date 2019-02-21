@@ -73,26 +73,25 @@ class WarGame(object):
         self.field = Field()
 
     def battle(self):
-        card1 = self.player1.cards[0]
-        card2 = self.player2.cards[0]
-        cards = [card1, card2]
-        print(card1, "\n", card2)
-        if card1.value() == 1 and card2.value() == 13:
-            place = self.player1.win_Battle()
-        elif card2.value() == 1 and card1.value() == 13:
-            place = self.player2.win_Battle()
+        self.player1.give(self.player1.cards[0],self.field.cards)
+        self.player2.give(self.player2.cards[0],self.field.cards)
+        #print(card1, "\n", card2)
+        #if card1.value() == 1 and card2.value() == 13:
+        #    place = self.player1.win_Battle()
+        #elif card2.value() == 1 and card1.value() == 13:
+        #    place = self.player2.win_Battle()
 
-        if card1.value() == card2.value():
-            cards, token = self.tie(cards)
+        #if card1.value() == card2.value():
+         #   cards, token = self.tie(cards)
 
-        elif card1.value() > card2.value():
-            place = self.player1.win_battle()
+        #elif card1.value() > card2.value():
+        #    place = self.player1.win_battle()
 
-        else:
-            place = self.player1.win_battle()
+        #else:
+        #    place = self.player1.win_battle()
 
-        for i in cards:
-            self.players[place].add(i)
+        #for i in cards:
+        #    self.players[place].add(i)
 
     def tie(self,cards):
         for i in range(3):
