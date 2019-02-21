@@ -47,10 +47,19 @@ class WarCard(cards.Card):
         return rep
 
 class Field(cards.Hand):
-    pass
+    @property
+    def winner(self):
+        if self.cards[0]>self.cards[1]
 
 class Pot(cards.Hand):
-    pass
+    def __init__(self, winner):
+        super(WarHand, self).__init__()
+        self.winner = winner
+
+    def give_winner(self):
+        for card in self.cards:
+            self.give(card, self.winner)
+
 
 
 class WarGame(object):
@@ -60,6 +69,8 @@ class WarGame(object):
         self.player1 = WarPlayer(names[0],0)
         self.player2 = WarPlayer(names[1],1)
         self.players = [self.player1, self.player2]
+        self.pot = Pot()
+        self.field = Field()
 
     def battle(self):
         card1 = self.player1.cards[0]
