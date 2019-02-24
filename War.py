@@ -7,6 +7,7 @@
 # imports
 import cards, games
 
+
 class WarHand(cards.Hand):
     def __init__(self, name, place):
         super(WarHand, self).__init__()
@@ -14,7 +15,7 @@ class WarHand(cards.Hand):
         self.place = place
 
     def __str__(self):
-        rep = self.name + ":\t" + len(self.cards)
+        rep = self.name + ":\t" + str(len(self.cards))
         return rep
 
 
@@ -24,8 +25,14 @@ class WarPlayer(WarHand):
         print(self.name, "Won the battle")
         return self.place
 
+    def lose_game(self):
+        if len(self.cards) == 0:
+            return 1
+        return 0
 
-class WarDeck(cards.deck):
+
+
+class WarDeck(cards.Deck):
     def populate(self):
         for suit in WarCard.SUITS:
             for rank in WarCard.RANKS:
@@ -46,35 +53,94 @@ class WarCard(cards.Card):
         rep = self.rank + self.suit
         return rep
 
+
 class Field(cards.Hand):
     @property
     def winner(self):
-        if self.cards[0]>self.cards[1]
+        winner = None
+        if self.cards[0].value == 1 and self.cards[1].value == 13:
+            winner = 0
+            return winner
+        elif self.cards[1].value == 1 and self.cards[0].value == 13:
+            winner = 1
+            return winner
+
+        elif self.cards[0].value > self.cards[1].value:
+            winner = 0
+        elif self.cards[0].value < self.cards[1].value:
+            winner = 1
+        elif self.cards[0].value == self.cards[1].value:
+            winner = "tie"
+
+
+        return winner
+
+    def give_to_pot(self,target):
+        for i in range(len(self.cards)):
+            self.give(self.cards[0],target)
+
 
 class Pot(cards.Hand):
-    def __init__(self, winner):
-        super(WarHand, self).__init__()
+    def __init__(self, winner=None):
+        super(Pot, self).__init__()
         self.winner = winner
 
     def give_winner(self):
-        for card in self.cards:
-            self.give(card, self.winner)
+        #didn't work had to change
+        for card in range(len(self.cards)):
+            self.give(self.cards[0], self.winner)
 
 
 
 class WarGame(object):
     def __init__(self,names):
         self.deck = WarDeck()
+        self.deck.populate()
         self.deck.shuffle()
-        self.player1 = WarPlayer(names[0],0)
-        self.player2 = WarPlayer(names[1],1)
+        self.player1 = WarPlayer(names[0], 0)
+        self.player2 = WarPlayer(names[1], 1)
         self.players = [self.player1, self.player2]
         self.pot = Pot()
         self.field = Field()
 
     def battle(self):
-        self.player1.give(self.player1.cards[0],self.field.cards)
-        self.player2.give(self.player2.cards[0],self.field.cards)
+        self.player1.cards[0].value
+        self.player1.give(self.player1.cards[0], self.field)
+        self.player2.give(self.player2.cards[0], self.field)
+        #Nathans work
+        print(self.field)
+        winner = self.field.winner
+        self.field.give_to_pot(self.pot)
+        if winner == "tie":
+            for i in range(1):
+                if len(self.player1.cards) == 0:
+                    break
+                for i in range(3):
+                    # see issue with the index if they can't add three cards in
+                    try:
+                        self.player1.give(self.player1.cards[0], self.pot)
+                    except:
+                        print("player has no cards left for war will use last card")
+                        self.pot.give(self.pot.cards[-1], self.player1)
+                        break
+
+            for i in range(1):
+                if len(self.player2.cards) == 0:
+                    break
+                for i in range(3):
+                    try:
+                        self.player2.give(self.player2.cards[0], self.pot)
+                    except:
+                        print("player has no cards left for war will use last card")
+                        self.pot.give(self.pot.cards[-1], self.player2)
+                        break
+            print("a war has started number of cards in pot is", len(self.pot.cards))
+            if len(self.player2.cards) != 0 and len(self.player1.cards) != 0:
+                self.battle()
+        else:
+            self.players[winner].win_battle()
+            self.pot.winner= self.players[winner]
+            self.pot.give_winner()
         #print(card1, "\n", card2)
         #if card1.value() == 1 and card2.value() == 13:
         #    place = self.player1.win_Battle()
@@ -93,14 +159,47 @@ class WarGame(object):
         #for i in cards:
         #    self.players[place].add(i)
 
-    def tie(self,cards):
-        for i in range(3):
-            card1 = self.player1[0]
-            card2 = self.player2[0]
-            cards.append(card1)
-            cards.append(card2)
-        card1 = self.player1[0]
-        card2 = self.player2[0]
-        return cards,
+    #nathan worked on
+    def play(self):
+        self.deck.deal(self.players, 26)
+        win=""
+        while win == "":
+            print(self.player1)
+            print(self.player2)
+            self.battle()
+            lose1 = self.player1.lose_game()
+            lose2 = self.player2.lose_game()
+            if lose1 == 1 and lose2 == 1:
+                win = "Tie, Nobody"
+            elif lose1 == 1:
+                win = self.player2.name
+            elif lose2 == 1:
+                 win = self.player1.name
+            input("press enter to continue")
+        print(win, "Won The Game")
 
 
+
+
+    #def tie(self,cards):
+     #   for i in range(3):
+     #       card1 = self.player1[0]
+     #       card2 = self.player2[0]
+     #       cards.append(card1)
+     #       cards.append(card2)
+     #   card1 = self.player1[0]
+     #   card2 = self.player2[0]
+     #   return cards,
+
+
+#########################################################
+# main
+def main():
+    name1 = games.name_check("enter player 1'2 name (no numbers)")
+    name2 = games.name_check("enter player 2's name (no numbers)")
+    names = [name1, name2]
+    game = WarGame(names)
+    game.play()
+
+
+main()
