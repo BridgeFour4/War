@@ -9,18 +9,22 @@ import cards, games
 
 
 class WarHand(cards.Hand):
+    """ allows for the name and the place to be added for each player"""
     def __init__(self, name, place):
         super(WarHand, self).__init__()
         self.name = name
         self.place = place
 
     def __str__(self):
+        """changes the string to display how many cards you have"""
         rep = self.name + ":\t" + str(len(self.cards))
         return rep
 
 
 class WarPlayer(WarHand):
-
+    """win battle displays the winner
+    lose_game return if they lost
+    """
     def win_battle(self):
         print(self.name, "Won the battle")
         return self.place
@@ -31,8 +35,8 @@ class WarPlayer(WarHand):
         return 0
 
 
-
 class WarDeck(cards.Deck):
+    """uses war card for value system"""
     def populate(self):
         for suit in WarCard.SUITS:
             for rank in WarCard.RANKS:
@@ -40,6 +44,7 @@ class WarDeck(cards.Deck):
 
 
 class WarCard(cards.Card):
+    """value for each of the cards to see which is greater"""
     ACE_VALUE = 1
     @property
     def value(self):
@@ -57,27 +62,27 @@ class WarCard(cards.Card):
 class Field(cards.Hand):
     @property
     def winner(self):
+        #returns who won the battle or if it was a tie
         winner = None
+        #special for ace and king
         if self.cards[0].value == 1 and self.cards[1].value == 13:
             winner = 0
             return winner
         elif self.cards[1].value == 1 and self.cards[0].value == 13:
             winner = 1
             return winner
-
+        # normal checks
         elif self.cards[0].value > self.cards[1].value:
             winner = 0
         elif self.cards[0].value < self.cards[1].value:
             winner = 1
         elif self.cards[0].value == self.cards[1].value:
             winner = "tie"
-
-
         return winner
 
-    def give_to_pot(self,target):
+    def give_to_pot(self, target):
         for i in range(len(self.cards)):
-            self.give(self.cards[0],target)
+            self.give(self.cards[0], target)
 
 
 class Pot(cards.Hand):
@@ -93,7 +98,7 @@ class Pot(cards.Hand):
 
 
 class WarGame(object):
-    def __init__(self,names):
+    def __init__(self, names):
         self.deck = WarDeck()
         self.deck.populate()
         self.deck.shuffle()
@@ -104,7 +109,6 @@ class WarGame(object):
         self.field = Field()
 
     def battle(self):
-        self.player1.cards[0].value
         self.player1.give(self.player1.cards[0], self.field)
         self.player2.give(self.player2.cards[0], self.field)
         #Nathans work
@@ -134,6 +138,7 @@ class WarGame(object):
                         print("player has no cards left for war will use last card")
                         self.pot.give(self.pot.cards[-1], self.player2)
                         break
+
             print("a war has started number of cards in pot is", len(self.pot.cards))
             if len(self.player2.cards) != 0 and len(self.player1.cards) != 0:
                 self.battle()
@@ -141,23 +146,6 @@ class WarGame(object):
             self.players[winner].win_battle()
             self.pot.winner = self.players[winner]
             self.pot.give_winner()
-        #print(card1, "\n", card2)
-        #if card1.value() == 1 and card2.value() == 13:
-        #    place = self.player1.win_Battle()
-        #elif card2.value() == 1 and card1.value() == 13:
-        #    place = self.player2.win_Battle()
-
-        #if card1.value() == card2.value():
-         #   cards, token = self.tie(cards)
-
-        #elif card1.value() > card2.value():
-        #    place = self.player1.win_battle()
-
-        #else:
-        #    place = self.player1.win_battle()
-
-        #for i in cards:
-        #    self.players[place].add(i)
 
     #nathan worked on
     def play(self):
@@ -180,22 +168,10 @@ class WarGame(object):
 
 
 
-
-    #def tie(self,cards):
-     #   for i in range(3):
-     #       card1 = self.player1[0]
-     #       card2 = self.player2[0]
-     #       cards.append(card1)
-     #       cards.append(card2)
-     #   card1 = self.player1[0]
-     #   card2 = self.player2[0]
-     #   return cards,
-
-
 #########################################################
 # main
 def main():
-    name1 = games.name_check("enter player 1'2 name (no numbers)")
+    name1 = games.name_check("enter player 1's name (no numbers)")
     name2 = games.name_check("enter player 2's name (no numbers)")
     names = [name1, name2]
     game = WarGame(names)
