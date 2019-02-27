@@ -9,14 +9,16 @@ import cards, games
 
 
 class WarHand(cards.Hand):
-    """ allows for the name and the place to be added for each player"""
+    """ allows for the name and the place to be added for each player
+    Dominic: Sets the names of the players"""
     def __init__(self, name, place):
         super(WarHand, self).__init__()
         self.name = name
         self.place = place
 
     def __str__(self):
-        """changes the string to display how many cards you have"""
+        """changes the string to display how many cards you have
+         Dominic: Displays what is in your hand"""
         rep = self.name + ":\t" + str(len(self.cards))
         return rep
 
@@ -24,6 +26,7 @@ class WarHand(cards.Hand):
 class WarPlayer(WarHand):
     """win battle displays the winner
     lose_game return if they lost
+    Dominic: Determines who wins the battle such as lose and win
     """
     def win_battle(self):
         print(self.name, "Won the battle")
@@ -36,7 +39,8 @@ class WarPlayer(WarHand):
 
 
 class WarDeck(cards.Deck):
-    """uses war card for value system"""
+    """uses war card for value system
+     Dominic: Uses the set value system for the game of war"""
     def populate(self):
         for suit in WarCard.SUITS:
             for rank in WarCard.RANKS:
@@ -44,7 +48,8 @@ class WarDeck(cards.Deck):
 
 
 class WarCard(cards.Card):
-    """value for each of the cards to see which is greater"""
+    """value for each of the cards to see which is greater
+     Dominic: Sets up the value system for the game of war"""
     ACE_VALUE = 1
     @property
     def value(self):
@@ -60,6 +65,7 @@ class WarCard(cards.Card):
 
 
 class Field(cards.Hand):
+    """Dominic: Sets up the field which is where cards are played and determined which is higher """
     @property
     def winner(self):
         #returns who won the battle or if it was a tie
@@ -80,6 +86,7 @@ class Field(cards.Hand):
             winner = "tie"
         return winner
 
+    # Sends cards to pot
     def give_to_pot(self, target):
         for i in range(len(self.cards)):
             self.give(self.cards[0], target)
@@ -90,14 +97,16 @@ class Pot(cards.Hand):
         super(Pot, self).__init__()
         self.winner = winner
 
+
     def give_winner(self):
-        #didn't work had to change
+        # Gives cards to winner if not a tie
         for card in range(len(self.cards)):
             self.give(self.cards[0], self.winner)
 
 
 
 class WarGame(object):
+    # Sets up attributes
     def __init__(self, names):
         self.deck = WarDeck()
         self.deck.populate()
@@ -109,14 +118,15 @@ class WarGame(object):
         self.field = Field()
 
     def battle(self):
+        # Players play card into the field
         self.player1.give(self.player1.cards[0], self.field)
         self.player2.give(self.player2.cards[0], self.field)
         #Nathans work
         print(self.field)
         winner = self.field.winner
-        self.field.give_to_pot(self.pot)
-        if winner == "tie":
-            for i in range(1):
+        self.field.give_to_pot(self.pot)# Gives the field to the pot
+        if winner == "tie":# What happens in the event of a tie
+            for i in range(1):# Checks to see if player 1 has anything to add to the pot
                 if len(self.player1.cards) == 0:
                     break
                 for i in range(3):
@@ -128,7 +138,7 @@ class WarGame(object):
                         self.pot.give(self.pot.cards[-1], self.player1)
                         break
 
-            for i in range(1):
+            for i in range(1):# Checks to see if player 2 has anything to add to the pot
                 if len(self.player2.cards) == 0:
                     break
                 for i in range(3):
@@ -138,16 +148,17 @@ class WarGame(object):
                         print("player has no cards left for war will use last card")
                         self.pot.give(self.pot.cards[-1], self.player2)
                         break
-
+            # Determines which player won
             print("a war has started number of cards in pot is", len(self.pot.cards))
             if len(self.player2.cards) != 0 and len(self.player1.cards) != 0:
                 self.battle()
-        else:
+        else:# This  is the winning condition for giving the cards to the tie winner
             self.players[winner].win_battle()
             self.pot.winner = self.players[winner]
             self.pot.give_winner()
 
     #nathan worked on
+    # the actual game this will get who won and display it
     def play(self):
         self.deck.deal(self.players, 26)
         win=""
